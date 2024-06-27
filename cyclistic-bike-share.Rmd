@@ -1,0 +1,104 @@
+---
+title: "Cyclistic Bike Share"
+author: "DR"
+date: "2024-06-21"
+output: html_document
+---
+
+## Cyclistic Bike Share
+
+### Business task
+Design marketing strategies aimed at converting casual riders into annual members.
+
+### Problem question
+How do annual members and casual riders use Cyclistic bikes differently?
+
+### Problem statement 
+Analyzing the Cyclistic historical bike trip to identify trends between annual members and casual riders.
+
+### Prepare
+* Data is stored in `raw-data` folder. 
+* The data source has been made public under this [license](https://divvybikes.com/data-license-agreement).
+* The following datasets have been used for analysis purposes:
+  1. `Divvy_Trips_2019_Q1`.
+  2. `Divvy_Trips_2020_Q1`.
+
+```{r table1, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+tabl <- "
+| Data Type         | Divvy_Trips_2019_Q1       |  Divvy_Trips_2020_Q1 |
+|-------------------|:-------------------------:|---------------------:|
+|Character          |`from_station_name`        |`ride_id`             |
+|                   |`to_station_name`          |`rideable_type`       |
+|                   |`usertype`                 |`start_station_name`  |
+|                   |`gender`                   |`end_station_name`    |
+|                   |                           |`member_casual`       |
+|<br>|  
+|Double-precision   |`trip_id`                  |`start_station_id`    |
+|                   |`bikeid`                   |`end_station_id`      |
+|                   |`from_station_id`          |`start_lat`           |
+|                   |`to_station_id`            |`start_lng`           |
+|                   |`birthyear`                |`end_lat`             |
+|<br>|
+|Numeric            |`tripduration`             |`end_lng`             |
+|<br>|
+|Datetime           |`start_time`               |`started_at`          |
+|                   |`end_time`                 |`ended_at`            |
+
+"
+cat(tabl) 
+```
+
+### Process
+* Data processing has been done using R.
+* Column names of `Divvy_Trips_2019_Q1` have been renamed to be consistent with column names of `Divvy_Trips_2020_Q1` as followings:
+  - `trip_id` becomes `ride_id`
+  - `bide_id` becomes `rideable_type`
+  - `start_time` becomes `started_at`
+  - `end_time` becomes `ended_at`
+  - `from_station_name` becomes `start_station_name`
+  - `to_station_name` becomes `end_station_name`
+  - `from_station_id` becomes `start_station_id`
+  - `to_station_id` becomes `end_station_id`
+  - `usertype` becomes `member_casual`
+* Converting `ride_id` and `rideable_type` in `Divvy_2019_Q1` to character data type so they can be compatible with data in `Divvy_2020_Q1`.
+
+* Combining `Divvy_Trips_2019_Q1` and `Divvy_Trips_2020_Q1` into a single dataframe, named `Divvy_Trips_cleaned` which is stored in `cleaned-data` folder. 
+
+* `Divvy_Trips_cleaned` consists of the following columns and data types, respectively:
+  - character: `ride_id`, `rideable_type`, `start_station_name`, `end_station_name`, `member_casual`
+  - numerics: `start_station_id`, `end_station_id`
+  - datetime: `started_at`, `ended_at`
+
+* Reassigning the values of `member_casual`.
+
+* Adding columns that list the date, month, day, and year of each ride.
+
+* Adding a `ride_length` calculation to the dataframe by using the formula: `ride_length = ended_at - started_at`
+
+* Removing bad data from the dataframe. Bad data contains "HQ QR" in `start_station_name`.
+
+* The final dataframe named `Divvy_Trips_Final` has been stored in `cleaned-data` folder. This final dataframe has been prepared for analysis. 
+
+### Analyze
+* The average `ride_length` (in seconds) for both casual and annual members is 1189 seconds with the median that took 539 seconds. The shortest ride happened in 1 second, while the longest ride took 10632022 seconds to finish.  
+
+* Specifically, casual riders took almost 5373 seconds ride on average, whereas, it took around 795 seconds for members.
+
+* Casual riders took the longest ride as a total of 10632022 seconds, while members took about 6096428 seconds. The riding duration of members is approximately 57% compared to casual riders.
+
+* Casual riders often ride on Thursdays with a total of 8452 seconds, approximately. In the opposite, members ride the least on Thursdays which is about 707 seconds. Members often ride over the weekends with approximately 974 seconds on Saturdays, and 973 seconds on Sundays.
+
+### Visualizations
+* On average, casual riders take the most rides over the weekends, particularly on Sundays with the average of 18652 number of rides. The longest average ride duration takes place on Thursdays with the average of 8452 seconds. On the other hand, members make use of the most rides on Tuesday with the average of 127974 number of rides. Members also take the longest rides on average of 974 seconds on Saturdays, and 973 seconds on Sundays. Members tend to take the shortest duartion of rides during Thursdays with the average of 707 seconds.
+
+![Number of riders by rider type.](./plots/Rplot.jpeg)
+
+
+![Number of riders by average ride duration.](./plots/avg-duration.jpeg)
+
+
+
+
+
+
+
